@@ -4,12 +4,11 @@ class LruMMU(MMU):
     def __init__(self, frames):
         # TODO: Constructor logic for LruMMU
         self.frames = frames
-        self.page_frame = []
+        self.indexes = {} # Stores pages in a set
+        self.page_frame = [] # Memory 
         self.page_faults = 0
         self.disk_reads = 0
         self.disk_writes = 0
-        self.page_faults = 0
-        self.indexes = {} # Stores pages in a list
         pass
 
     def set_debug(self):
@@ -24,8 +23,7 @@ class LruMMU(MMU):
 
     def read_memory(self, page_number):
         # TODO: Implement the method to read memory
-        # If page number is in the frame, remove from the frame and add it to the end
-        # to indicate it has been recently used
+        
         if page_number in self.page_frame: 
             self.page_frame.remove(page_number)
             self.page_frame.append(page_number)
@@ -50,10 +48,12 @@ class LruMMU(MMU):
     def write_memory(self, page_number):
         # TODO: Implement the method to write memory
         
+        # If page number is in the frame, remove from the frame and add it to the end
+        # to indicate it has been recently used
         if page_number in self.page_frame:
             self.page_frame.remove(page_number)
             self.page_frame.append(page_number)
-            self.indexes[page_number] = True
+            self.indexes[page_number] = True # Marks new written page as dirty
         else:
             self.page_faults += 1
             self.disk_reads += 1
